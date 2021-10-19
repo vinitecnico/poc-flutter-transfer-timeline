@@ -1,23 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:money2/money2.dart';
 
 void main() => runApp(MaterialApp(
       home: Scaffold(
-        body: Column(
-          children: [
-            const Card(
-                child: ListTile(
-              leading: Icon(Icons.monetization_on),
-              title: Text('19-10 - 100,00'),
-              subtitle: Text('transferência via QR-code'),
-            )),
-            const Card(
-                child: ListTile(
-              leading: Icon(Icons.monetization_on),
-              title: Text('18-10 - 50,00'),
-              subtitle: Text('transferência via lista de contatos'),
-            )),
-          ],
-        ),
+        body: const TransferList(),
         appBar: AppBar(title: const Text('transferências')),
         floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),
@@ -25,6 +11,45 @@ void main() => runApp(MaterialApp(
         ),
       ),
     ));
+
+class TransferList extends StatelessWidget {
+  const TransferList({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TransferItem(Transfer(10000, 'transferência via QR-code')),
+        TransferItem(Transfer(2000, 'transferência via lista de contatos')),
+        TransferItem(Transfer(1500, 'transferência via lista de contatos'))
+      ],
+    );
+  }
+}
+
+class TransferItem extends StatelessWidget {
+  final usd = Currency.create('USD', 2);
+  final Transfer _transfer;
+
+  TransferItem(this._transfer, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        child: ListTile(
+      leading: const Icon(Icons.monetization_on),
+      title: Text(Money.fromInt(_transfer.amount, usd).toString()),
+      subtitle: Text(_transfer.description),
+    ));
+  }
+}
+
+class Transfer {
+  final int amount;
+  final String description;
+
+  Transfer(this.amount, this.description);
+}
 
 // void main() {
 //   runApp(const MyApp());
