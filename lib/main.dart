@@ -25,11 +25,33 @@ class FormTransfer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('create transfer'),
-      ),
-      body: const Text('test'),
-    );
+        appBar: AppBar(title: const Text('create transfer')),
+        body: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: TextField(
+                style: TextStyle(fontSize: 24.0),
+                decoration: InputDecoration(
+                    labelText: 'Número da conta', hintText: '0000'),
+                keyboardType: TextInputType.number,
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: TextField(
+                style: TextStyle(fontSize: 24.0),
+                decoration: InputDecoration(
+                  icon: Icon(Icons.monetization_on),
+                  labelText: 'valor',
+                  hintText: '0.00',
+                ),
+                keyboardType: TextInputType.number,
+              ),
+            ),
+            ElevatedButton(onPressed: () {}, child: const Text('confirmation'))
+          ],
+        ));
   }
 }
 
