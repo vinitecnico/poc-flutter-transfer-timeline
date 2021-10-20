@@ -1,34 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:money2/money2.dart';
 
-void main() => runApp(MaterialApp(
-      home: Scaffold(
-        body: const TransferList(),
-        appBar: AppBar(title: const Text('transferências')),
-        floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.add),
-          onPressed: () => {},
-        ),
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        primarySwatch: Colors.green,
       ),
-    ));
+      home: const Scaffold(
+        body: FormTransfer(),
+      ),
+    );
+  }
+}
+
+class FormTransfer extends StatelessWidget {
+  const FormTransfer({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('create transfer'),
+      ),
+      body: const Text('test'),
+    );
+  }
+}
 
 class TransferList extends StatelessWidget {
   const TransferList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TransferItem(Transfer(10000, 'transferência via QR-code')),
-        TransferItem(Transfer(2000, 'transferência via lista de contatos')),
-        TransferItem(Transfer(1500, 'transferência via lista de contatos'))
-      ],
+    return Scaffold(
+      appBar: AppBar(title: const Text('transferências')),
+      body: Column(
+        children: [
+          TransferItem(Transfer(10000, 'transferência via QR-code')),
+          TransferItem(Transfer(2000, 'transferência via lista de contatos')),
+          TransferItem(Transfer(1500, 'transferência via lista de contatos'))
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () => {},
+      ),
     );
   }
 }
 
 class TransferItem extends StatelessWidget {
-  final usd = Currency.create('USD', 2);
+  final usd = Currency.create('pt_BR', 2);
   final Transfer _transfer;
 
   TransferItem(this._transfer, {Key? key}) : super(key: key);
