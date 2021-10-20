@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:money2/money2.dart';
+// import 'package:money2/money2.dart';
 
 void main() => runApp(const BytebankApp());
 
@@ -31,46 +31,63 @@ class FormTransfer extends StatelessWidget {
         appBar: AppBar(title: const Text('create transfer')),
         body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: _controladorCampoNumeroConta,
-                style: const TextStyle(fontSize: 24.0),
-                decoration: const InputDecoration(
-                    labelText: 'Número da conta', hintText: '0000'),
-                keyboardType: TextInputType.number,
-              ),
+            Editor(
+              controller: _controladorCampoNumeroConta,
+              title: 'Account number',
+              description: '0000',
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: _controllerAmount,
-                style: const TextStyle(fontSize: 24.0),
-                decoration: const InputDecoration(
-                    icon: Icon(Icons.monetization_on),
-                    labelText: 'Valor',
-                    hintText: '0.00'),
-                keyboardType: TextInputType.number,
-              ),
+            Editor(
+              controller: _controllerAmount,
+              title: 'amount',
+              description: '0.00',
+              icon: Icons.monetization_on,
             ),
             ElevatedButton(
-                onPressed: () {
-                  debugPrint('here >>>');
-                  debugPrint(_controladorCampoNumeroConta.text);
-                  debugPrint(_controllerAmount.text);
-                  final int? accountNumber =
-                      int.tryParse(_controladorCampoNumeroConta.text);
-                  final double? amount =
-                      double.tryParse(_controllerAmount.text);
-                  if (accountNumber != null && amount != null) {
-                    final transferCreated = Transfer(amount,
-                        'transferência via lista de contatos', accountNumber);
-                    debugPrint('$transferCreated');
-                  }
-                },
+                onPressed: () => _createTransfer(),
                 child: const Text('confirmation'))
           ],
         ));
+  }
+
+  void _createTransfer() {
+    final int? accountNumber = int.tryParse(_controladorCampoNumeroConta.text);
+    final double? amount = double.tryParse(_controllerAmount.text);
+    if (accountNumber != null && amount != null) {
+      final transferCreated = Transfer(
+          amount, 'transferência via lista de contatos', accountNumber);
+      debugPrint('$transferCreated');
+    }
+  }
+}
+
+class Editor extends StatelessWidget {
+  final TextEditingController? controller;
+  final String? title;
+  final String? description;
+  final IconData? icon;
+
+  Editor({
+    this.controller,
+    this.title,
+    this.description,
+    this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: TextField(
+        controller: controller,
+        style: const TextStyle(fontSize: 24.0),
+        decoration: InputDecoration(
+          icon: icon != null ? Icon(icon) : null,
+          labelText: title,
+          hintText: description,
+        ),
+        keyboardType: TextInputType.number,
+      ),
+    );
   }
 }
 
