@@ -20,16 +20,35 @@ class BytebankApp extends StatelessWidget {
 }
 
 // ignore: use_key_in_widget_constructors
-class FormTransfer extends StatelessWidget {
+class FormTransfer extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return FormTransferState();
+  }
+}
+
+class FormTransferState extends State<FormTransfer> {
   final TextEditingController _controladorCampoNumeroConta =
       TextEditingController();
   final TextEditingController _controllerAmount = TextEditingController();
 
+  void _createTransfer(context) {
+    final int? accountNumber = int.tryParse(_controladorCampoNumeroConta.text);
+    final double? amount = double.tryParse(_controllerAmount.text);
+    if (accountNumber != null && amount != null) {
+      final Transfer? transferCreated = Transfer(
+          amount, 'transferência via lista de contatos', accountNumber);
+      debugPrint("$transferCreated");
+      Navigator.pop(context, transferCreated);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('create transfer')),
-        body: Column(
+      appBar: AppBar(title: const Text('create transfer')),
+      body: SingleChildScrollView(
+        child: Column(
           children: [
             Editor(
               controller: _controladorCampoNumeroConta,
@@ -46,18 +65,9 @@ class FormTransfer extends StatelessWidget {
                 onPressed: () => _createTransfer(context),
                 child: const Text('confirmation'))
           ],
-        ));
-  }
-
-  void _createTransfer(context) {
-    final int? accountNumber = int.tryParse(_controladorCampoNumeroConta.text);
-    final double? amount = double.tryParse(_controllerAmount.text);
-    if (accountNumber != null && amount != null) {
-      final Transfer? transferCreated = Transfer(
-          amount, 'transferência via lista de contatos', accountNumber);
-      debugPrint("$transferCreated");
-      Navigator.pop(context, transferCreated);
-    }
+        ),
+      ),
+    );
   }
 }
 
@@ -121,13 +131,16 @@ class TransferListState extends State<TransferList> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
               return FormTransfer();
             }));
-            future.then((transferenciaRecebida) {
-              debugPrint("$transferenciaRecebida");
-              setState(() {
-                widget._transferList.add(Transfer(
-                    transferenciaRecebida!.amount,
-                    transferenciaRecebida.description,
-                    transferenciaRecebida.accountNumber));
+            future.then((transferReceived) {
+              Future.delayed(const Duration(seconds: 1), () {
+                if (transferReceived != null) {
+                  setState(() {
+                    widget._transferList.add(Transfer(
+                        transferReceived.amount,
+                        transferReceived.description,
+                        transferReceived.accountNumber));
+                  });
+                }
               });
 
               debugPrint('length >> ${widget._transferList.length}');
