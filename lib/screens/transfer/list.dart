@@ -33,20 +33,20 @@ class TransferListState extends State<TransferList> {
               return FormTransfer();
             }));
             future.then((transferReceived) {
-              Future.delayed(const Duration(seconds: 1), () {
-                if (transferReceived != null) {
-                  setState(() {
-                    widget._transferList.add(Transfer(
-                        transferReceived.amount,
-                        transferReceived.description,
-                        transferReceived.accountNumber));
-                  });
-                }
-              });
-
-              debugPrint('length >> ${widget._transferList.length}');
+              if (transferReceived != null) {
+                _updateTransfer(Transfer(
+                    transferReceived.amount,
+                    transferReceived.description,
+                    transferReceived.accountNumber));
+              }
             });
           },
         ));
+  }
+
+  void _updateTransfer(Transfer transferReceived) {
+    setState(() {
+      widget._transferList.add(transferReceived);
+    });
   }
 }
