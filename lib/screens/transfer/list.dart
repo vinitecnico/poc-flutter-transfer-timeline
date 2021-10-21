@@ -28,11 +28,9 @@ class TransferListState extends State<TransferList> {
         floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),
           onPressed: () {
-            final Future<Transfer?> future =
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
               return FormTransfer();
-            }));
-            future.then((transferReceived) {
+            })).then((transferReceived) {
               if (transferReceived != null) {
                 _updateTransfer(Transfer(
                     transferReceived.amount,
