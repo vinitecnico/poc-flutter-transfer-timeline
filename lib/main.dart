@@ -13,7 +13,7 @@ class BytebankApp extends StatelessWidget {
         primarySwatch: Colors.green,
       ),
       home: Scaffold(
-        body: FormTransfer(),
+        body: TransferList(),
       ),
     );
   }
@@ -43,19 +43,20 @@ class FormTransfer extends StatelessWidget {
               icon: Icons.monetization_on,
             ),
             ElevatedButton(
-                onPressed: () => _createTransfer(),
+                onPressed: () => _createTransfer(context),
                 child: const Text('confirmation'))
           ],
         ));
   }
 
-  void _createTransfer() {
+  void _createTransfer(context) {
     final int? accountNumber = int.tryParse(_controladorCampoNumeroConta.text);
     final double? amount = double.tryParse(_controllerAmount.text);
     if (accountNumber != null && amount != null) {
-      final transferCreated = Transfer(
+      final Transfer? transferCreated = Transfer(
           amount, 'transferência via lista de contatos', accountNumber);
-      debugPrint('$transferCreated');
+      debugPrint("$transferCreated");
+      Navigator.pop(context, transferCreated);
     }
   }
 }
@@ -91,27 +92,48 @@ class Editor extends StatelessWidget {
   }
 }
 
-class TransferList extends StatelessWidget {
-  const TransferList({Key? key}) : super(key: key);
+class TransferList extends StatefulWidget {
+  final List<Transfer> _transferList = [];
 
+  TransferList({Key? key}) : super(key: key);
+
+  @override
+  TransferListState createState() => TransferListState();
+}
+
+class TransferListState extends State<TransferList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('transferências')),
-      body: Column(
-        children: [
-          TransferItem(Transfer(100.0, 'transferência via QR-code', null)),
-          TransferItem(
-              Transfer(20.0, 'transferência via lista de contatos', null)),
-          TransferItem(
-              Transfer(15.0, 'transferência via lista de contatos', null))
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () => {},
-      ),
-    );
+        appBar: AppBar(title: const Text('transferências')),
+        body: ListView.builder(
+          itemCount: widget._transferList.length,
+          itemBuilder: (context, index) {
+            final Transfer transfer = widget._transferList[index];
+            return TransferItem(Transfer(
+                transfer.amount, transfer.description, transfer.accountNumber));
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.add),
+          onPressed: () {
+            final Future<Transfer?> future =
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return FormTransfer();
+            }));
+            future.then((transferenciaRecebida) {
+              debugPrint("$transferenciaRecebida");
+              setState(() {
+                widget._transferList.add(Transfer(
+                    transferenciaRecebida!.amount,
+                    transferenciaRecebida.description,
+                    transferenciaRecebida.accountNumber));
+              });
+
+              debugPrint('length >> ${widget._transferList.length}');
+            });
+          },
+        ));
   }
 }
 
@@ -119,14 +141,14 @@ class TransferItem extends StatelessWidget {
   // final usd = Currency.create('pt_BR', 2);
   final Transfer _transfer;
 
-  const TransferItem(this._transfer, {Key? key}) : super(key: key);
+  TransferItem(this._transfer, {Key? key});
 
   @override
   Widget build(BuildContext context) {
     return Card(
         child: ListTile(
       leading: const Icon(Icons.monetization_on),
-      title: Text('$_transfer.amount'),
+      title: Text('${_transfer.amount}'),
       // Text(Money.fromInt(_transfer.amount, usd).toString()),
       subtitle: Text(_transfer.description),
     ));
