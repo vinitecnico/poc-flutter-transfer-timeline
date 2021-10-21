@@ -10,11 +10,15 @@ class BytebankApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      home: Scaffold(
-        body: TransferList(),
-      ),
+          primaryColor: Colors.green[900],
+          colorScheme: ColorScheme.fromSwatch().copyWith(
+            secondary: Colors.blueAccent[700], // Your accent color
+          ),
+          buttonTheme: ButtonThemeData(
+            buttonColor: Colors.blueAccent[700],
+            textTheme: ButtonTextTheme.primary,
+          )),
+      home: TransferList(),
     );
   }
 }
